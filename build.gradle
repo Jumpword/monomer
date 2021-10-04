@@ -1,0 +1,92 @@
+plugins {
+    id "org.springframework.boot" version "2.5.4"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+    id 'java'
+}
+
+group 'cn.wolves'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility=JavaVersion.VERSION_1_8 //编译版本
+targetCompatibility=JavaVersion.VERSION_1_8 //打包版本
+
+repositories {
+    maven {
+        url('https://maven.aliyun.com/nexus/content/groups/public') //阿里云maven仓库
+    }
+    mavenLocal()
+    mavenCentral()
+}
+
+
+ext{
+    hutoolVersion  = "5.3.8"
+    mybatisVersion = "3.4.0"
+    fastjson = "1.2.75"
+    swaggerVersion = "3.0.2"
+    jwtVersion = "0.9.1"
+}
+
+configurations {
+    implementation {
+        exclude module: "spring-boot-starter-tomcat"
+        exclude module: "slf4j-log4j12"
+        exclude module: 'junit'
+    }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+bootJar {
+    manifest {
+        attributes "Implementation-Title": "Monomer Application",
+                "Implementation-Version": archiveVersion
+    }
+}
+
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation "org.springframework.boot:spring-boot-starter-jetty"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "com.baomidou:mybatis-plus-boot-starter:$mybatisVersion"
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "io.jsonwebtoken:jjwt:$jwtVersion"
+
+
+    implementation "cn.hutool:hutool-core:$hutoolVersion"
+    implementation "cn.hutool:hutool-crypto:$hutoolVersion"
+    implementation "cn.hutool:hutool-extra:$hutoolVersion"
+    implementation "com.alibaba:fastjson:$fastjson"
+    implementation "com.github.xiaoymin:knife4j-spring-boot-starter:$swaggerVersion"
+
+    runtimeOnly "mysql:mysql-connector-java"
+
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    testCompileOnly "org.projectlombok:lombok"
+    testAnnotationProcessor "org.projectlombok:lombok"
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+test {
+        useJUnitPlatform()
+        testLogging.showStandardStreams = true
+    }
+
+task projectVersion {
+        description = 'Prints current project version.'
+        doLast {
+            println project.version
+        }
+    }
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+}
